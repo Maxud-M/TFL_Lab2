@@ -17,6 +17,7 @@ public class SolutionOfSystem {
                 equations.add(inputFile.nextLine());
             }
             SOF s = new SOF(equations);
+            s.solution();
         } catch(FileNotFoundException e) {
             System.out.println(e.getMessage());
             System.exit(0);
