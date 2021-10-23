@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SOF {//System Of Equations
+public class SOE {//System Of Equations
 
     public static final char[] variables = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
     public static final char[] letters =  "abcdefghijklmnopqrstuvwxyz".toCharArray();
@@ -49,6 +49,13 @@ public class SOF {//System Of Equations
         if(Y.equation.containsKey(X.nameOfUnknown)) {
             String coeffXinY = Y.equation.get(X.nameOfUnknown);
             String coeff = coeffXinY + IterationKleene(X.coeffOfUnknown);
+            if(X.equation.entrySet().isEmpty()) {
+                if(Y.equation.containsKey('\1')) {
+                    Y.equation.put('\1', Y.equation.get('\1') +  "+" + coeff);
+                } else {
+                    Y.equation.put('\1', coeff);
+                }
+            }
             for(Map.Entry<Character, String> entryX: X.equation.entrySet()) {
                 if(entryX.getKey() == Y.nameOfUnknown) {
                     if(Y.coeffOfUnknown != "") {
@@ -172,20 +179,22 @@ public class SOF {//System Of Equations
                 }
                 res += "+";
             }
-            res = res.substring(0, res.length() - 1);
-            return res;
+            return (res.equals(""))? res: res.substring(0, res.length() - 1);
         }
 
 
         public String getSolution() {
             String solution = IterationKleene(coeffOfUnknown);
-            solution += "(" + getEquation() + ")";
+            String eqString = getEquation();
+            if(!eqString.equals("")) {
+                solution += brakes(eqString);
+            }
             return solution;
         }
 
     }
 
-    public SOF(ArrayList<String> equations) {
+    public SOE(ArrayList<String> equations) {
         this.equations = new ArrayList<>(0);
         for(int i = 0; i < equations.size(); ++i) {
             this.equations.add(new Equation((equations.get(i))));

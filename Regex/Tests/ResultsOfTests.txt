@@ -1,0 +1,8 @@
+Regex: aabb(abc)*
+Average: 0.5961117
+
+Regex: [^bc][^bc][^ac][^ac]([^bc][^ac][^ab])*
+Average = 0.497242
+
+Regex: aabb(abc)*?
+Average: 0.4994613

@@ -1,24 +1,23 @@
-package ru.evistix28;
+package ru.RG;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class SolutionOfSystem {
-    public static void main(String[] args) throws FileNotFoundException {
+public class Main {
+    public static void main(String[] args) {
         try {
             Scanner in = new Scanner(System.in);
             System.out.print("Enter path to test file: ");
             String pathToTest = in.nextLine();
             Scanner inputFile = new Scanner(new FileReader(pathToTest));
-            ArrayList<String> equations = new ArrayList<>(0);
+            ArrayList<String> rules = new ArrayList<>(0);
             while (inputFile.hasNext()) {
-                equations.add(inputFile.nextLine());
+                rules.add(inputFile.nextLine());
             }
-            SOE s = new SOE(equations);
-            s.solution();
+            RG rg = new RG(rules);
+            rg.system.solution();
         } catch (FileNotFoundException e) {
             System.out.println(e.getMessage());
             System.exit(0);
