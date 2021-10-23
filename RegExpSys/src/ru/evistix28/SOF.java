@@ -22,6 +22,9 @@ public class SOF {//System Of Equations
 
     public static String IterationKleene(String str) {
         String res = "";
+        if(str.equals("")) {
+            return res;
+        }
         if(str.charAt(0) != '(' && str.length() != 1) {
             res += "(" + str + ")*";
         } else {
@@ -33,6 +36,13 @@ public class SOF {//System Of Equations
     ArrayList<Equation> equations;
 
 
+    public static String brakes(String str) {
+        if(str.charAt(0) == '(' || str.split("\\+").length < 2) {
+            return str;
+        }
+        return "(" + str + ")";
+    }
+
     private void substition(int i, int j) {
         Equation X = equations.get(i);
         Equation Y = equations.get(j);
@@ -41,16 +51,21 @@ public class SOF {//System Of Equations
             String coeff = coeffXinY + IterationKleene(X.coeffOfUnknown);
             for(Map.Entry<Character, String> entryX: X.equation.entrySet()) {
                 if(entryX.getKey() == Y.nameOfUnknown) {
-                    Y.coeffOfUnknown +=  "+" + coeff + entryX.getValue();
+                    if(Y.coeffOfUnknown != "") {
+                        Y.coeffOfUnknown += "+" + coeff + brakes(entryX.getValue());
+                    } else {
+                        Y.coeffOfUnknown = coeff + brakes(entryX.getValue());
+                    }
                     continue;
                 }
                 if(Y.equation.containsKey(entryX.getKey())) {
                     String newCoeff = Y.equation.get(entryX.getKey());
-                    Y.equation.put(entryX.getKey(), newCoeff + "+" + coeff + entryX.getValue());
+                    Y.equation.put(entryX.getKey(), newCoeff + "+" + coeff + brakes(entryX.getValue()));
                 } else {
-                    Y.equation.put(entryX.getKey(), coeff + entryX.getValue());
+                    Y.equation.put(entryX.getKey(), coeff + brakes(entryX.getValue()));
                 }
             }
+            Y.equation.remove(X.nameOfUnknown);
             equations.set(j, Y);
         }
         return;
@@ -71,7 +86,26 @@ public class SOF {//System Of Equations
             System.out.println(equations.get(i).getSolution());
         }
     }
+    public static boolean checkWrongCoeff(String coeff) {
+        if(numOfBrackes(coeff) > 1) {
+            return true;
+        }
+        if(coeff.contains("|") && !coeff.contains("(")) {
+            return true;
+        }
+        return false;
+    }
 
+    private static int numOfBrackes(String coeff) {
+        int count = 0;
+        for(int i = 0; i < coeff.length(); ++i) {
+            if(coeff.charAt(i) == '(') {
+                count++;
+            }
+        }
+        return count;
+
+    }
 
 
     public class Equation { //X = aX + b
@@ -81,10 +115,12 @@ public class SOF {//System Of Equations
 
 
 
+
         public Equation(String eq) {
+            coeffOfUnknown = "";
             equation = new HashMap<>();
-            eq.replaceAll(" ", "");
-            eq.replaceAll("\n", "");
+            eq = eq.replaceAll(" ", "");
+            eq = eq.replaceAll("\n", "");
             int itr = 0;
             while(!contains(variables, eq.charAt(itr))) {
                 itr++;
@@ -94,20 +130,30 @@ public class SOF {//System Of Equations
             int startOfCoeff = itr;
             int endOfCoeff = 0;
             while(itr < eq.length()) {
-                while(!contains(variables, eq.charAt(itr)) && itr != eq.length()) {
+                startOfCoeff = itr;
+                while(itr != eq.length() && !contains(variables, eq.charAt(itr))) {
                     itr++;
                 }
                 endOfCoeff = itr;
+                if(startOfCoeff == endOfCoeff) {
+                    System.out.println("Variable without coefficient");
+                    System.exit(0);
+                }
+                String coeff = eq.substring(startOfCoeff, endOfCoeff);
+                if(checkWrongCoeff(coeff)) {
+                    System.out.println("Wrong coefficient");
+                    System.exit(0);
+                }
+                if(itr == eq.length()) {
+                    equation.put('\1', eq.substring(startOfCoeff, endOfCoeff));
+                    continue;
+                }
                 if(eq.charAt(itr) == nameOfUnknown) {
                     coeffOfUnknown = eq.substring(startOfCoeff, endOfCoeff);
                     itr += 2;
                     continue;
                 }
-                if(itr == eq.length()) {
-                    equation.put('\0', eq.substring(startOfCoeff, endOfCoeff));
-                } else {
-                    equation.put(eq.charAt(itr), eq.substring(startOfCoeff, endOfCoeff));
-                }
+                equation.put(eq.charAt(itr), eq.substring(startOfCoeff, endOfCoeff));
                 itr += 2;
             }
 
@@ -119,10 +165,14 @@ public class SOF {//System Of Equations
             String res = "";
 
             for(Map.Entry<Character, String> entry: equation.entrySet()) {
-                res += entry.getValue() + entry.getKey();
+                if(entry.getKey() == '\1') {
+                    res += entry.getValue();
+                } else {
+                    res += entry.getValue() + entry.getKey();
+                }
                 res += "+";
             }
-            res = res.substring(0, equation.size() - 1);
+            res = res.substring(0, res.length() - 1);
             return res;
         }
 
