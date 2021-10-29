@@ -27,13 +27,23 @@ public class RG {
                 if(indexOfEq == -1) {
                     system.equations.add(new SOE.Equation(equation));
                 } else {
-                    system.equations.get(indexOfEq).equation.put(rule.charAt(4), String.valueOf(rule.charAt(3)));
+                    SOE.Equation eq = system.equations.get(indexOfEq);
+                    if(!eq.equation.containsKey(rule.charAt(4))) {
+                        system.equations.get(indexOfEq).equation.put(rule.charAt(4), String.valueOf(rule.charAt(3)));
+                    } else {
+                        system.equations.get(indexOfEq).equation.put(rule.charAt(4), SOE.brakes(rule.charAt(3) + "+" +  eq.equation.get(rule.charAt(4))));
+                    }
                 }
             } else {
                 if(indexOfEq == -1) {
                     system.equations.add(new SOE.Equation(equation));
                 } else {
-                    system.equations.get(indexOfEq).equation.put('\1', String.valueOf(rule.charAt(3)));
+                    SOE.Equation eq = system.equations.get(indexOfEq);
+                    if(!eq.equation.containsKey('\1')) {
+                        system.equations.get(indexOfEq).equation.put('\1', String.valueOf(rule.charAt(3)));
+                    } else {
+                        system.equations.get(indexOfEq).equation.put('\1', SOE.brakes(rule.charAt(3) + "+" +  eq.equation.get('\1')));
+                    }
                 }
             }
         }
