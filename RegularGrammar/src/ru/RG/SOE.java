@@ -48,6 +48,10 @@ public class SOE {//System Of Equations
     private void substition(int i, int j) {
         Equation X = equations.get(i);
         Equation Y = equations.get(j);
+        if(X.equation.size() == 0) {
+            Y.equation.remove(X.nameOfUnknown);
+            return;
+        }
         if(Y.equation.containsKey(X.nameOfUnknown)) {
             String coeffXinY = Y.equation.get(X.nameOfUnknown);
             String coeff = coeffXinY + IterationKleene(X.coeffOfUnknown);
@@ -95,6 +99,8 @@ public class SOE {//System Of Equations
             }
         }
     }
+
+
 
     public void solution() {
         sort();
