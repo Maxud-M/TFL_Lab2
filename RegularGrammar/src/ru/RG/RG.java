@@ -29,7 +29,11 @@ public class RG {
                 } else {
                     SOE.Equation eq = system.equations.get(indexOfEq);
                     if(!eq.equation.containsKey(rule.charAt(4))) {
-                        system.equations.get(indexOfEq).equation.put(rule.charAt(4), String.valueOf(rule.charAt(3)));
+                        if(rule.charAt(0) == rule.charAt(4)) {
+                            eq.coeffOfUnknown = String.valueOf(rule.charAt(3));
+                        } else {
+                            system.equations.get(indexOfEq).equation.put(rule.charAt(4), String.valueOf(rule.charAt(3)));
+                        }
                     } else {
                         system.equations.get(indexOfEq).equation.put(rule.charAt(4), SOE.brakes(rule.charAt(3) + "+" +  eq.equation.get(rule.charAt(4))));
                     }
