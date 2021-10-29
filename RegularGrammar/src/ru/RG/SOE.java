@@ -80,7 +80,24 @@ public class SOE {//System Of Equations
         return;
     }
 
+    void swap(int i, int j) {
+        Equation tmp = equations.get(i);
+        equations.set(i, equations.get(j));
+        equations.set(j, tmp);
+    }
+
+    void sort() {
+        int itr = 0;
+        for(int i = 0; i < equations.size(); ++i) {
+            if(equations.get(i).nameOfUnknown == 'S') {
+                swap(itr, i);
+                itr++;
+            }
+        }
+    }
+
     public void solution() {
+        sort();
 
         for(int i = equations.size() - 1; i >= 0; --i) {
             for(int j = i - 1; j >= 0; --j) {
